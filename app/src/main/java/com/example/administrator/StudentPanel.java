@@ -78,7 +78,7 @@ public class StudentPanel extends AppCompatActivity {
                     }
                 });
             } else {
-                Toast.makeText(StudentPanel.this, "Sign-in successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(StudentPanel.this, "error UId", Toast.LENGTH_SHORT).show();
 
             }
         }
