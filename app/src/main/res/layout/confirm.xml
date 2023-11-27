@@ -58,7 +58,7 @@
 
 
         <Button
-            android:id="@+id/buttonRegister"
+            android:id="@+id/buttonClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/editTextRegNo"
@@ -66,8 +66,16 @@
             android:background="?attr/colorPrimary"
             android:minHeight="48dp"
             android:padding="12dp"
-            android:text="Confirm Details"
+            android:text="View Details"
             android:textColor="@android:color/white" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCourses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/buttonClick"
+            android:layout_marginTop="40dp"
+            android:background="@color/white" />
 
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

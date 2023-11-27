@@ -10,7 +10,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/grey">
 
         <!-- Text at the top -->
         <TextView
@@ -43,9 +46,9 @@
                 android:id="@+id/textViewRegNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="Reg No: [Registration Number]"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp"/>
+                android:textSize="16sp" />
 
         </LinearLayout>
 
@@ -64,7 +67,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/buttonViewCourseList"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="40dp"
+            android:background="@color/white" />
 
 
     </RelativeLayout>

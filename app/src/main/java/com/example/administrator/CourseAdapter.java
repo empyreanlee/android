@@ -21,14 +21,14 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     @NonNull
     @Override
     public CourseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.goat, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_course, parent, false);
         return new CourseViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
         String course = courses.get(position);
-        holder.textViewCourse.setText(course);
+        holder.bind(course, position);
     }
 
     @Override
@@ -43,11 +43,22 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     }
 
     public static class CourseViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewCourse;
+        private final TextView[] courseTextViews;
 
         public CourseViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewCourse = itemView.findViewById(R.id.textViewCourse);
+            courseTextViews = new TextView[]{
+                    itemView.findViewById(R.id.textViewCourse1),
+                    itemView.findViewById(R.id.textViewCourse2),
+                    itemView.findViewById(R.id.textViewCourse3),
+                    itemView.findViewById(R.id.textViewCourse4),
+                    itemView.findViewById(R.id.textViewCourse5)
+            };
+        }
+
+        public void bind(String course, int position) {
+            courseTextViews[position].setText(course);
+            courseTextViews[position].setVisibility(View.VISIBLE);
         }
     }
 }

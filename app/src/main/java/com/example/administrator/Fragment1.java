@@ -41,8 +41,8 @@ public class Fragment1 extends Fragment implements MyPagerAdapter.TitledFragment
 
 
         buttonRegister = view.findViewById(R.id.buttonRegister);
-        editTextName = ((AdminPage) requireActivity()).getEditTextName();
-        editTextRegNo = ((AdminPage) requireActivity()).getEditTextRegNo();
+        editTextName = ((StudentReg) requireActivity()).getEditTextName();
+        editTextRegNo = ((StudentReg) requireActivity()).getEditTextRegNo();
 
         Aftereffects = view.findViewById(R.id.AfterEffects);
         ComputerVision = view.findViewById(R.id.ComputerVision);
@@ -58,13 +58,13 @@ public class Fragment1 extends Fragment implements MyPagerAdapter.TitledFragment
 
             ArrayList<String> selectedCourses = new ArrayList<>();
 
-            if (Aftereffects.isChecked()) selectedCourses.add("After Effects");
-            if (ComputerVision.isChecked()) selectedCourses.add("Computer Vision");
-            if (NeuralNetworks.isChecked()) selectedCourses.add("Neural Networks");
+            if (Aftereffects.isChecked()) selectedCourses.add("AE");
+            if (ComputerVision.isChecked()) selectedCourses.add("CVision");
+            if (NeuralNetworks.isChecked()) selectedCourses.add("Neural");
             if (LLM.isChecked()) selectedCourses.add("LLM");
-            if (QuantumComputing.isChecked()) selectedCourses.add("Quantum Computing");
+            if (QuantumComputing.isChecked()) selectedCourses.add("Quantum");
             if (Robotics.isChecked()) selectedCourses.add("Robotics");
-            if (TuringThesis.isChecked()) selectedCourses.add("Turing Thesis");
+            if (TuringThesis.isChecked()) selectedCourses.add("Turing");
 
 
             if (TextUtils.isEmpty(name) || TextUtils.isEmpty(regNo) || selectedCourses.isEmpty()) {

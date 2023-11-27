@@ -37,7 +37,7 @@ public class Fragment2 extends Fragment implements MyPagerAdapter.TitledFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for Fragment2
-        View view = inflater.inflate(R.layout.common2, container, false);
+        View view = inflater.inflate(R.layout.fragment2, container, false);
 
 
 
@@ -47,8 +47,8 @@ public class Fragment2 extends Fragment implements MyPagerAdapter.TitledFragment
 
 
         buttonRegister = view.findViewById(R.id.buttonRegister);
-        editTextName = ((AdminPage) requireActivity()).getEditTextName();
-        editTextRegNo = ((AdminPage) requireActivity()).getEditTextRegNo();
+        editTextName = ((StudentReg) requireActivity()).getEditTextName();
+        editTextRegNo = ((StudentReg) requireActivity()).getEditTextRegNo();
 
 
         checkboxAnimation = view.findViewById(R.id.checkboxAnimation);
@@ -71,7 +71,7 @@ public class Fragment2 extends Fragment implements MyPagerAdapter.TitledFragment
             if (checkboxCyberSecurity.isChecked()) selectedCourses.add("CyberSecurity");
             if (checkboxMachine.isChecked()) selectedCourses.add("Machine");
             if (checkboxSystem.isChecked()) selectedCourses.add("System");
-            if (checkboxCompilerDesign.isChecked()) selectedCourses.add("Compiler design");
+            if (checkboxCompilerDesign.isChecked()) selectedCourses.add("CompilerDesign");
 
             if (TextUtils.isEmpty(name) || TextUtils.isEmpty(regNo) || selectedCourses.isEmpty()) {
                 Toast.makeText(getActivity(), "Please fill in all fields", Toast.LENGTH_SHORT).show();

@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Administrator"
         tools:targetApi="31">
         <activity
-            android:name=".AdminPage"
+            android:name=".StudentReg"
             android:exported="false" />
         <activity
             android:name=".Confirm"
@@ -22,11 +22,11 @@
             android:name=".StudentPanel"
             android:exported="false" />
         <activity
-            android:name=".SignInActivity"
+            android:name=".SignInStudentActivity"
             android:exported="false">
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name=".SignUpStudentActivity"
             android:exported="true">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />

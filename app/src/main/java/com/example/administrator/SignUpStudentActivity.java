@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpStudentActivity extends AppCompatActivity {
 
     private EditText Name, Email, Password;
 
@@ -20,7 +20,7 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_sign_up_student);
 
         Name = findViewById(R.id.editTextName);
         Email = findViewById(R.id.editTextEmail);
@@ -31,7 +31,7 @@ public class SignUpActivity extends AppCompatActivity {
         Button buttonSignUp = findViewById(R.id.buttonSignUp);
         buttonSignUp.setOnClickListener(v -> signUpUser());
         textView2.setOnClickListener(v -> {
-            Intent loginIntent = new Intent(getApplicationContext(), SignInActivity.class);
+            Intent loginIntent = new Intent(getApplicationContext(), SignInStudentActivity.class);
             startActivity(loginIntent);
         });
     }
@@ -45,12 +45,12 @@ public class SignUpActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign-up success, update UI or navigate to the next screen
-                        Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+                        Intent intent = new Intent(SignUpStudentActivity.this, SignInStudentActivity.class);
                         startActivity(intent);
-                        Toast.makeText(SignUpActivity.this, "Sign-up successful", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpStudentActivity.this, "Sign-up successful", Toast.LENGTH_SHORT).show();
                     } else {
                         // If sign-up fails, display a message to the user.
-                        Toast.makeText(SignUpActivity.this, "Sign-up failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignUpStudentActivity.this, "Sign-up failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

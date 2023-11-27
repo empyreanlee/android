@@ -56,79 +56,61 @@ public class StudentPanel extends AppCompatActivity {
         courseAdapter = new CourseAdapter(new ArrayList<>()); // Initialize with an empty list
         recyclerViewCourses.setAdapter(courseAdapter);
 
-        // Get the current authenticated user
         FirebaseUser user = mAuth.getCurrentUser();
 
         if (user != null) {
             String userDetails = "UID: " + user.getUid() + ", Email: " + user.getEmail();
             Toast.makeText(getApplicationContext(), userDetails, Toast.LENGTH_LONG).show();
-
-            // Fetch student details from Firestore
             String userId = getIntent().getStringExtra("userId");
-
-                // Fetch student details from Firestore using userId
             fetchStudentDetails(user.getUid());
-
-
-                buttonViewCourseList.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // You can navigate to the course list activity or implement the desired behavior here
-                        // Pass the necessary information to the next activity, if needed
-                    }
+                buttonViewCourseList.setOnClickListener(v -> {
+                    fetchCourseList(userId, 1);
+                    // You can navigate to the course list activity or implement the desired behavior here
+                    // Pass the necessary information to the next activity, if needed
                 });
             } else {
                 Toast.makeText(StudentPanel.this, "error UId", Toast.LENGTH_SHORT).show();
-
             }
         }
-
-
-// Inside your StudentPanel class
-
-// ...
-
-
     private void fetchStudentDetails(String userId) {
         db.collection("users").document(userId).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document != null && document.exists()) {
-                                String name = document.getString("name");
-                                String regNo = document.getString("regNo");
-                                textViewWelcome.setText("Welcome, " + name + "!");
-                                textViewName.setText("Name: " + name);
-                                textViewRegNo.setText("Reg No: " + regNo);
-
-                                // Fetch registered courses for a specific semester
-                                fetchCourseList(userId, 1); // Change semester number as needed
-                            }
-                        } else {
-                            // Handle errors
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null && document.exists()) {
+                            String name = document.getString("name");
+                            String regNo = document.getString("regNo");
+                            textViewWelcome.setText("Welcome, " + name + "!");
+                            textViewName.setText("Name: " + name);
+                            textViewRegNo.setText("Reg No: " + regNo);
                         }
+                    } else {
+                        // Handle errors
                     }
                 });
     }
-
     private void fetchCourseList(String userId, int semester) {
         db.collection("users").document(userId)
                 .collection("semesters").document("semester" + semester)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot semesterDocument = task.getResult();
-                            if (semesterDocument != null && semesterDocument.exists()) {
-                                List<String> registeredCourses = (List<String>) semesterDocument.get("registeredcourses");
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot semesterDocument = task.getResult();
+                        if (semesterDocument != null && semesterDocument.exists()) {
+                            List<String> registeredCourses = (List<String>) semesterDocument.get("registeredcourses");
 
+                            if (registeredCourses != null) {
+                                // Update the CourseAdapter with the retrieved courses
+                                courseAdapter.updateCourses(registeredCourses);
+                            }
+                            else {
+                                Toast.makeText(StudentPanel.this, "No registered courses found.", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            // Handle errors
+                            Toast.makeText(StudentPanel.this, "Semester document does not exist.", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(StudentPanel.this, "Sign-in failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
     }

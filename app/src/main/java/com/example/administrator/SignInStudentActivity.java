@@ -9,19 +9,9 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-import java.util.ArrayList;
-
-public class SignInActivity extends AppCompatActivity {
+public class SignInStudentActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText Email;
     private EditText Password;
@@ -31,7 +21,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sign_in_student);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance(); // Initialize Firestore
@@ -57,7 +47,7 @@ public class SignInActivity extends AppCompatActivity {
                 if (document.exists()) {
                     // The student has registered for courses
                     // Redirect to the page displaying student info and courses
-                    Intent intent = new Intent(SignInActivity.this, StudentPanel.class);
+                    Intent intent = new Intent(SignInStudentActivity.this, Confirm.class);
                     startActivity(intent);
                 } else {
                     // If not registered, proceed with email/password sign-in
@@ -65,12 +55,12 @@ public class SignInActivity extends AppCompatActivity {
                             .addOnCompleteListener(this, signInTask -> {
                                 if (signInTask.isSuccessful()) {
                                     // Sign-in success, update UI or navigate to the next screen
-                                    Intent intent = new Intent(SignInActivity.this, AdminPage.class);
+                                    Intent intent = new Intent(SignInStudentActivity.this, StudentReg.class);
                                     startActivity(intent);
 
                                 } else {
                                     // If sign-in fails, display a message to the user.
-                                    Toast.makeText(SignInActivity.this, "Sign-in failed: " + signInTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SignInStudentActivity.this, "Sign-in failed: " + signInTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }

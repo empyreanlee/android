@@ -1,77 +1,72 @@
 package com.example.administrator;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Confirm extends AppCompatActivity {
 
-
-    private Button buttonRegister, button;
+    private Button buttonClick;
     private EditText editTextName;
     private EditText editTextRegNo;
-    private CheckBox checkboxAnimation, checkboxBlockchain, checkboxVR, checkboxCyberSecurity, checkboxMachine, checkboxSystem, checkboxCompilerDesign;
-    private DatabaseReference studentsRef;
     private FirebaseAuth mAuth;
-    private TextView textViewWelcome;
-    private TextView textViewName;
-    private TextView textViewRegNo;
-
     private FirebaseFirestore db;
+    private RecyclerView recyclerViewCourses;
+    private CourseAdapter courseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity);
+        setContentView(R.layout.confirm);
         FirebaseApp.initializeApp(this);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        buttonRegister = findViewById(R.id.buttonRegister);
+        buttonClick = findViewById(R.id.buttonClick);
         editTextName = findViewById(R.id.editTextName);
         editTextRegNo = findViewById(R.id.editTextRegNo);
+        recyclerViewCourses = findViewById(R.id.recyclerViewCourses);
 
+        recyclerViewCourses.setLayoutManager(new LinearLayoutManager(this));
+        courseAdapter = new CourseAdapter(new ArrayList<>()); // Initialize with an empty list
+        recyclerViewCourses.setAdapter(courseAdapter);
 
-        buttonRegister.setOnClickListener(v -> {
-            String name = editTextName.getText().toString();
+        buttonClick.setOnClickListener(v -> {
             String regNo = editTextRegNo.getText().toString();
-            fetchStudentDetails(regNo, textViewWelcome, textViewName, textViewRegNo);
 
-            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(regNo)) {
-                Toast.makeText(Confirm.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(regNo)) {
+                Toast.makeText(Confirm.this, "Please enter registration number", Toast.LENGTH_SHORT).show();
                 return;
             }
-            Intent intent = new Intent(Confirm.this, StudentPanel.class);
-            intent.putExtra("regNo", regNo);
-            startActivity(intent);
 
-            checkUserExists(name, regNo);
+            fetchStudentDetails(regNo);
         });
     }
-    private void fetchStudentDetails(String regNo, TextView textViewWelcome, TextView textViewName, TextView textViewRegNo) {
+
+    private void fetchStudentDetails(String regNo) {
         db.collection("users")
-                .whereEqualTo("regNo", regNo)  // Query using regNo
+                .whereEqualTo("regNo", regNo)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -81,44 +76,53 @@ public class Confirm extends AppCompatActivity {
                                 // Assuming there's only one document matching the regNo
                                 String name = document.getString("name");
                                 String regNo = document.getString("regNo");
-                                textViewWelcome.setText("Welcome, " + name + "!");
-                                textViewName.setText("Name: " + name);
-                                textViewRegNo.setText("Reg No: " + regNo);
+                                Toast.makeText(Confirm.this, "Welcome, " + name + "!" + regNo , Toast.LENGTH_SHORT).show();
+
+                                // Fetch the registered courses
+                                fetchRegisteredCourses(document.getId());
                             }
                         } else {
-                            // Handle errors
+                            // Handle query failure
+                            Toast.makeText(Confirm.this, "Error fetching student details", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    private void checkUserExists(String name, String regNo) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference usersCollection = db.collection("users");
+    private void fetchRegisteredCourses(String userId) {
+        db.collection("users")
+                .document(userId)
+                .collection("semesters")
+                .document("semester")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot semesterDocument = task.getResult();
+                            if (semesterDocument != null && semesterDocument.exists()) {
+                                Log.d("Firestore", "Semester Document: " + semesterDocument.getData());
+                                List<String> registeredCourses = (List<String>) semesterDocument.get("registeredCourses");
+                                if (registeredCourses != null  && !registeredCourses.isEmpty()) {
+                                    Log.d("Firestore", "Registered Courses: " + registeredCourses);
+                                    // Do something with the registered courses
+                                    Toast.makeText(Confirm.this, "Registered Courses: " + registeredCourses.toString(), Toast.LENGTH_LONG).show();
+                                    courseAdapter.updateCourses(registeredCourses);
 
-        // Query to check if a user with the given name and regNo exists
-        Query query = usersCollection.whereEqualTo("name", name).whereEqualTo("regNo", regNo);
+                                } else {
+                                    Log.d("Firestore", "Registered Courses is null or empty");
 
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                QuerySnapshot querySnapshot = task.getResult();
-                if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                    // User with the given name and regNo already exists
-                    Toast.makeText(Confirm.this, "Welcome ", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(Confirm.this, StudentPanel.class);
-                    startActivity(intent);
-                } else {
-                    // User does not exist, proceed with registration logic
-                }
-            } else {
-                // Handle query failure
-                Toast.makeText(Confirm.this, "Error checking user existence", Toast.LENGTH_SHORT).show();
-            }
-        });
+                                    Toast.makeText(Confirm.this, "No registered courses found for this semester", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Log.d("Firestore", "Semester Document does not exist or is empty");
+                                Toast.makeText(Confirm.this, "Semester document does not exist", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(Confirm.this, "Error fetching registered courses", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
+
 }
-
-
-
-
-
